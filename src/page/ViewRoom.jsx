@@ -138,7 +138,7 @@ const ViewRoom = () => {
                                     room.cover_img ||
                                     "https://images.unsplash.com/photo-1560185008-b033106af5c3?q=80&w=800"
                                 }
-                                alt={`Room ${room.room_no}`}
+                                alt={`Room ${room.room_number}`}
                                 className="h-52 w-full object-cover"
                             />
                         </figure>
@@ -150,7 +150,7 @@ const ViewRoom = () => {
                             <div className="flex justify-between items-start gap-2">
 
                                 <h2 className="card-title">
-                                    Room {room.room_no}
+                                    Room {room.id}
                                 </h2>
 
                                 <div
@@ -191,7 +191,7 @@ const ViewRoom = () => {
                                 <div>
                                     🚪{" "}
                                     <span className="font-medium">
-                                        Room {room.room_no}
+                                        Room {room.room_number}
                                     </span>
                                 </div>
 

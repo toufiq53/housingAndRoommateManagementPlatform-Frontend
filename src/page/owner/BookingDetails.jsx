@@ -80,6 +80,9 @@ const BookingDetails = () => {
                             <p>
                                 Room: {booking.room_id}
                             </p>
+                            <p>
+                                Room: {booking.room_number}
+                            </p>
 
                             <p>
                                 User: {booking.user_id}
