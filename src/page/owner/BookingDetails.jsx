@@ -78,10 +78,10 @@ const BookingDetails = () => {
                             </h2>
 
                             <p>
-                                Room: {booking.room_id}
+                                Room id: {booking.room_id}
                             </p>
                             <p>
-                                Room: {booking.room_number}
+                                Room number: {booking.room_number}
                             </p>
 
                             <p>

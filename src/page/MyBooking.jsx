@@ -119,7 +119,7 @@ const MyBooking = () => {
                                         </h2>
 
                                         <p className="text-sm text-gray-500">
-                                            Room {booking.room_id}
+                                            Room id {booking.room_id}
                                         </p>
                                     </div>
 
@@ -156,7 +156,7 @@ const MyBooking = () => {
                                         </span>
 
                                         <span className="font-medium">
-                                            {booking.room_number}
+                                            #{booking.room_number}
                                         </span>
                                     </div>
 
