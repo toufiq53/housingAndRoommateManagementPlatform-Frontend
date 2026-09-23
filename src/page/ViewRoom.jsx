@@ -150,7 +150,7 @@ const ViewRoom = () => {
                             <div className="flex justify-between items-start gap-2">
 
                                 <h2 className="card-title">
-                                    Room {room.id}
+                                    Room id {room.id}
                                 </h2>
 
                                 <div
@@ -191,7 +191,7 @@ const ViewRoom = () => {
                                 <div>
                                     🚪{" "}
                                     <span className="font-medium">
-                                        Room {room.room_number}
+                                        Room number #{room.room_number}
                                     </span>
                                 </div>
 
