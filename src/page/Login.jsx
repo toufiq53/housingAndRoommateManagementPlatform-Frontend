@@ -10,8 +10,10 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const { authUser, setAuthUser } = useContext(AuthContext)
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {
+        setLoading(true);
         try {
             const formData = new URLSearchParams()
             formData.append('username', username)
@@ -38,13 +40,20 @@ const Login = () => {
             const userData = await userRes.json()
             //    console.log(userData);
 
-           
             if (userData.id) {
                 setAuthUser(userData)
-                navigate('/')
+                setLoading(false)
+
+                if (userData.role == 'owner') {
+                    navigate('/owner')
+                }
+                else {
+                    navigate('/')
+                }
             }
             else {
                 toast.error('username or password is incorrect')
+                setLoading(false)
                 return
             }
 
@@ -73,7 +82,10 @@ const Login = () => {
                             <div><a className="link link-hover">Forgot password?</a></div>
 
 
-                            <button onClick={handleLogin} className="btn btn-neutral mt-4">Login</button>
+                            <button onClick={handleLogin} className="btn btn-neutral mt-4"
+                                disabled={loading}>
+                                {loading ? 'Logging in...' : 'Login'}
+                            </button>
                             <div><Link to={'/signup'} className="link link-hover font-semibold ">Don't have an account?</Link></div>
                         </fieldset>
                     </div>
