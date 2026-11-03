@@ -1,22 +1,28 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthProvider';
-import { Navigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 
+const OwnerProtected = ({ children }) => {
+    const { authUser, loading } = useContext(AuthContext);
+    const location = useLocation();
 
-const OwnerProtected = ({children}) => {
-    const {authUser,loading}=useContext(AuthContext)
-
-    if (loading)
-        return <p>Loading.......</p>
-
-    if(!authUser){
-        return <Navigate to={'/login'}></Navigate>
+    if (loading) {
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+            </div>
+        );
     }
-    if(authUser?.role !== 'owner')
-    {
-        return <Navigate to={'/'}></Navigate>
+
+    if (!authUser) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
-    return children
+
+    if (authUser?.role !== 'owner' && authUser?.role !== 'admin') {
+        return <Navigate to="/" replace />;
+    }
+
+    return children;
 };
 
 export default OwnerProtected;

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import Root from "../layout/Root";
 import Home from "../page/Home";
 import Login from "../page/Login";
@@ -12,7 +12,6 @@ import UserProfile from "../page/UserProfile";
 import ChangePassword from "../page/ChangePassword";
 import OwnerLayout from "../layout/OwnerLayout";
 import ManageProperty from "../page/owner/ManageProperty";
-
 import EditProperty from "../page/owner/EditProperty";
 import ViewMyRoom from "../page/owner/ViewMyRoom";
 import EditRoom from "../page/owner/EditRoom";
@@ -26,7 +25,7 @@ import OwnerDashBoard from "../page/owner/OwnerDashBoard";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Root></Root>,
+        element: <Root />,
         children: [
             {
                 path: '/',
@@ -46,11 +45,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/properties-room/:id',
-                element:<ViewRoom />
+                element: <ViewRoom />
             },
             {
                 path: '/room-details/:id',
-                element: <PrivateRoutes><RoomDetails /></PrivateRoutes>
+                element: <RoomDetails />
             },
             {
                 path: '/my-booking',
@@ -71,8 +70,8 @@ const router = createBrowserRouter([
         element: <OwnerProtected><OwnerLayout /></OwnerProtected>,
         children: [
             {
-                path:'/owner',
-                element:<OwnerDashBoard/>
+                index: true,
+                element: <OwnerDashBoard />
             },
             {
                 path: 'manage-property',
@@ -82,7 +81,6 @@ const router = createBrowserRouter([
                 path: 'edit/property/:id',
                 element: <EditProperty />
             },
-
             {
                 path: 'view/rooms/:id',
                 element: <ViewMyRoom />
@@ -95,27 +93,41 @@ const router = createBrowserRouter([
                 path: 'manage-booking-details',
                 element: <BookingDetails />
             }
-
         ]
     },
     {
         path: "/roommate",
-        element:<PrivateRoutes><RoommateLayout/></PrivateRoutes>,
+        element: <PrivateRoutes><RoommateLayout /></PrivateRoutes>,
         children: [
             {
-                path: '/roommate'
-                
+                index: true,
+                element: <BrowseProfile />
             },
             {
-                path:'profile',
-                element:<MyProfile/>
+                path: 'browse-profile',
+                element: <BrowseProfile />
             },
             {
-                path:'browse-profile',
-                element:<BrowseProfile/>
+                path: 'profile',
+                element: <MyProfile />
             }
         ]
+    },
+    {
+        path: "*",
+        element: (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-6 text-center">
+                <div className="text-7xl mb-4 font-black text-primary">404</div>
+                <h2 className="text-2xl font-bold text-base-content">Page Not Found</h2>
+                <p className="text-sm text-base-content/60 mt-2 max-w-sm">
+                    The page you're looking for doesn't exist or has been moved.
+                </p>
+                <a href="/" className="btn btn-primary btn-sm rounded-xl mt-6 px-6 font-bold">
+                    Return to Homepage
+                </a>
+            </div>
+        )
     }
-
 ]);
-export default router
+
+export default router;

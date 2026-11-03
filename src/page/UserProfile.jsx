@@ -1,19 +1,21 @@
-
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthProvider';
 import { baseurl } from '../services/BaseUrl';
+import { VerifiedBadge } from '../utils/verification';
 import toast from 'react-hot-toast';
+import { HiOutlineUser, HiOutlineEnvelope, HiOutlineShieldCheck, HiOutlineSparkles } from "react-icons/hi2";
 
 const UserProfile = () => {
-
-    const { authUser, accessToken } = useContext(AuthContext);
+    const { authUser, accessToken, refreshUser } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
         email: '',
         username: '',
         firstname: '',
-        lastname: ''
+        lastname: '',
+        payment_number: ''
     });
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (authUser) {
@@ -21,14 +23,14 @@ const UserProfile = () => {
                 email: authUser.email || '',
                 username: authUser.username || '',
                 firstname: authUser.firstname || '',
-                lastname: authUser.lastname || ''
+                lastname: authUser.lastname || '',
+                payment_number: authUser.payment_number || '01712-345678'
             });
         }
     }, [authUser]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -37,243 +39,210 @@ const UserProfile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true);
 
-        const res = await fetch(`${baseurl}/edituser`, {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
+        try {
+            const res = await fetch(`${baseurl}/edituser`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (res.ok) {
-            toast.success(data.message);
-        } else {
-            toast.error(data.detail);
+            if (res.ok) {
+                toast.success(data.message || "Profile updated successfully!");
+                if (refreshUser) refreshUser();
+            } else {
+                toast.error(data.detail || "Failed to update profile");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Network error updating profile");
+        } finally {
+            setSaving(false);
         }
     };
 
     if (!authUser) {
         return (
             <div className="flex justify-center items-center min-h-[60vh]">
-                <span className="loading loading-spinner loading-lg"></span>
+                <span className="loading loading-spinner loading-lg text-primary"></span>
             </div>
         );
     }
 
-
-return (
-    <div className="min-h-screen bg-base-200 py-10 px-4">
-
-        <div className="max-w-4xl mx-auto">
-
-            {/* Page Header */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    My Profile
-                </h1>
-
-                <p className="text-gray-500 mt-1">
-                    Manage your account information.
-                </p>
-            </div>
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                {/* Profile Card */}
-                <div className="card bg-base-100 shadow-md h-fit">
-
-                    <div className="card-body items-center text-center">
-
-                        {/* Profile Photo */}
-                        <div className="avatar placeholder">
-                            <div className="bg-primary text-primary-content w-28 rounded-full pt-6 ">
-                                <span className="text-5xl font-semibold">
-                                    {authUser.firstname?.charAt(0)?.toUpperCase()}
-                                </span>
-                            </div>
-                        </div>
-
-
-                        {/* Name */}
-                        <h2 className="text-2xl font-bold mt-3">
-                            {authUser.firstname} {authUser.lastname}
-                        </h2>
-
-
-                        {/* Username */}
-                        <p className="text-gray-500">
-                            @{authUser.username}
-                        </p>
-
-
-                        {/* Role Badge */}
-                        <div className="badge badge-primary mt-2 capitalize">
-                            {authUser.role}
-                        </div>
-
-
-                        {/* Email */}
-                        <div className="w-full mt-6 text-left">
-
-                            <p className="text-sm text-gray-500">
-                                Email
-                            </p>
-
-                            <p className="font-medium break-all">
-                                {authUser.email}
-                            </p>
-
-                        </div>
-
-                    </div>
-
+    return (
+        <div className="min-h-screen bg-base-100 py-10">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                {/* Header */}
+                <div>
+                    <span className="text-xs uppercase font-extrabold tracking-widest text-primary px-3 py-1 rounded-full bg-primary/10">
+                        Account Settings
+                    </span>
+                    <h1 className="text-3xl font-black text-base-content mt-2 tracking-tight">
+                        Personal Profile
+                    </h1>
+                    <p className="text-sm text-base-content/65 mt-1">
+                        Manage your account details and contact information.
+                    </p>
                 </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Left Avatar Card */}
+                    <div className="lg:col-span-4">
+                        <div className="card bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 text-center space-y-4">
+                            <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content flex items-center justify-center text-4xl font-black mx-auto shadow-xl shadow-primary/25">
+                                {authUser.firstname ? authUser.firstname[0]?.toUpperCase() : authUser.username[0]?.toUpperCase()}
+                            </div>
 
-                {/* Edit Profile */}
-                <div className="lg:col-span-2">
+                            <div>
+                                <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                                    <h3 className="font-extrabold text-xl text-base-content">
+                                        {authUser.firstname} {authUser.lastname}
+                                    </h3>
+                                    <VerifiedBadge email={authUser.email} className="text-[#1877F2] text-xl" />
+                                </div>
+                                <p className="text-xs text-base-content/60 font-medium mt-0.5">@{authUser.username}</p>
+                                <span className={`badge badge-sm font-bold uppercase mt-2 ${
+                                    authUser.role === 'owner' ? 'badge-primary' : 'badge-neutral'
+                                }`}>
+                                    {authUser.role}
+                                </span>
+                            </div>
 
-                    <div className="card bg-base-100 shadow-md">
+                            <div className="pt-4 border-t border-base-200 text-left text-xs space-y-2.5 text-base-content/75">
+                                <div className="flex items-center gap-2">
+                                    <HiOutlineEnvelope className="text-primary text-base shrink-0" />
+                                    <span className="truncate">{authUser.email}</span>
+                                </div>
+                                {authUser.role === 'owner' && (
+                                    <div className="p-3 bg-base-200/50 rounded-2xl border border-base-200 space-y-1">
+                                        <span className="text-[10px] uppercase font-bold text-base-content/60 block">
+                                            bKash & Nagad (Personal)
+                                        </span>
+                                        <span className="font-black text-sm text-primary flex items-center gap-1.5">
+                                            <span>📱</span>
+                                            <span>{authUser.payment_number || '01712-345678'}</span>
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-                        <div className="card-body">
-
-                            <h2 className="text-2xl font-bold">
-                                Personal Information
+                    {/* Right Edit Form */}
+                    <div className="lg:col-span-8">
+                        <div className="card bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 sm:p-8">
+                            <h2 className="text-xl font-bold text-base-content mb-6">
+                                Update Information
                             </h2>
 
-                            <p className="text-sm text-gray-500 mb-4">
-                                Update your account information below.
-                            </p>
-
-
-                            <form
-                                onSubmit={handleSubmit}
-                                className="space-y-5"
-                            >
-
-                                {/* First Name + Last Name */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-
-                                        <label className="label">
-                                            <span className="label-text font-medium">
-                                                First Name
-                                            </span>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                                            First Name
                                         </label>
-
                                         <input
                                             type="text"
                                             name="firstname"
                                             value={formData.firstname}
                                             onChange={handleChange}
-                                            className="input input-bordered w-full"
-                                            placeholder="First name"
+                                            className="input input-bordered w-full rounded-2xl text-sm"
+                                            required
                                         />
-
                                     </div>
 
-
                                     <div>
-
-                                        <label className="label">
-                                            <span className="label-text font-medium">
-                                                Last Name
-                                            </span>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                                            Last Name
                                         </label>
-
                                         <input
                                             type="text"
                                             name="lastname"
                                             value={formData.lastname}
                                             onChange={handleChange}
-                                            className="input input-bordered w-full"
-                                            placeholder="Last name"
+                                            className="input input-bordered w-full rounded-2xl text-sm"
+                                            required
                                         />
-
                                     </div>
-
                                 </div>
 
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                                        Username
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        className="input input-bordered w-full rounded-2xl text-sm"
+                                        required
+                                    />
+                                </div>
 
-                                {/* Email + Username */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="input input-bordered w-full rounded-2xl text-sm"
+                                        required
+                                    />
+                                </div>
 
-                                    <div>
-
-                                        <label className="label">
-                                            <span className="label-text font-medium">
-                                                Email
-                                            </span>
-                                        </label>
-
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="input input-bordered w-full"
-                                            placeholder="Email"
-                                        />
-
-                                    </div>
-
-
-                                    <div>
-
-                                        <label className="label">
-                                            <span className="label-text font-medium">
-                                                Username
-                                            </span>
-                                        </label>
-
+                                {authUser.role === 'owner' && (
+                                    <div className="pt-2 border-t border-base-200 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-base-content/80">
+                                                Registered Payment Number (bKash & Nagad)
+                                            </label>
+                                            <span className="badge badge-xs badge-primary font-bold">Owner Only</span>
+                                        </div>
                                         <input
                                             type="text"
-                                            name="username"
-                                            value={formData.username}
+                                            name="payment_number"
+                                            value={formData.payment_number}
                                             onChange={handleChange}
-                                            className="input input-bordered w-full"
-                                            placeholder="Username"
+                                            placeholder="e.g. 01712-345678"
+                                            className="input input-bordered w-full rounded-2xl text-sm font-semibold"
+                                            required
                                         />
-
+                                        <p className="text-[11px] text-base-content/60">
+                                            As an owner, you have <strong>one single number</strong> used for both bKash and Nagad. Tenants will send 50% advance payments directly to this number before you confirm reservations.
+                                        </p>
                                     </div>
+                                )}
 
-                                </div>
-
-
-                                {/* Save Button */}
-                                <div className="flex justify-end pt-4">
-
+                                <div className="pt-4 flex justify-end">
                                     <button
                                         type="submit"
-                                        className="btn btn-primary px-8"
+                                        disabled={saving}
+                                        className="btn btn-primary rounded-2xl px-8 font-bold shadow-md shadow-primary/25 cursor-pointer"
                                     >
-                                        Save Changes
+                                        {saving ? (
+                                            <span className="loading loading-spinner loading-sm"></span>
+                                        ) : (
+                                            "Save Changes"
+                                        )}
                                     </button>
-
                                 </div>
-
                             </form>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
-    </div>
-);
-
-
+    );
 };
 
 export default UserProfile;

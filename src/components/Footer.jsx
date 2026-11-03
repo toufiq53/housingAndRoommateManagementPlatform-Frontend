@@ -1,60 +1,108 @@
 import React from 'react';
+import { Link } from 'react-router';
+import { HiHomeModern, HiOutlineEnvelope, HiOutlinePhone, HiOutlineMapPin } from "react-icons/hi2";
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
 const Footer = () => {
     return (
-        <div>
-            <footer className="footer footer-horizontal footer-center bg-base-200 text-base-content rounded p-10 mt-20">
-                <nav className="grid grid-flow-col gap-4">
-                    <a className="link link-hover">About us</a>
-                    <a className="link link-hover">Contact</a>
-                    <a className="link link-hover">Jobs</a>
-                    <a className="link link-hover">Press kit</a>
-                </nav>
-                <nav>
-                    <div className="grid grid-flow-col gap-4">
-                        <a>
-                            <svg
-                                aria-label="Twitter"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                className="fill-current">
-                                <path
-                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
-                            </svg>
-                        </a>
-                        <a>
-                            <svg
-                                aria-label="YouTube"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                className="fill-current">
-                                <path
-                                    d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
-                            </svg>
-                        </a>
-                        <a>
-                            <svg
-                                aria-label="Facebook"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                className="fill-current">
-                                <path
-                                    d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
-                            </svg>
-                        </a>
+        <footer className="bg-base-200/90 text-base-content border-t border-base-300 mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+                    {/* Brand Column */}
+                    <div className="lg:col-span-2 space-y-4">
+                        <Link to="/" className="flex items-center gap-2.5">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-primary-content shadow-md shadow-primary/20">
+                                <HiHomeModern className="text-2xl" />
+                            </div>
+                            <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                                Nestora
+                            </span>
+                        </Link>
+                        <p className="text-base-content/70 text-sm max-w-sm leading-relaxed">
+                            The smartest, most reliable platform to find verified homes, furnished rooms, and compatible roommates with zero hassle and verified owners.
+                        </p>
+                        <div className="flex items-center gap-3 pt-2">
+                            <a href="#twitter" className="w-9 h-9 rounded-full bg-base-100 flex items-center justify-center text-base-content/70 hover:text-primary hover:shadow-md transition-all">
+                                <FaTwitter className="text-sm" />
+                            </a>
+                            <a href="#facebook" className="w-9 h-9 rounded-full bg-base-100 flex items-center justify-center text-base-content/70 hover:text-primary hover:shadow-md transition-all">
+                                <FaFacebookF className="text-sm" />
+                            </a>
+                            <a href="#instagram" className="w-9 h-9 rounded-full bg-base-100 flex items-center justify-center text-base-content/70 hover:text-primary hover:shadow-md transition-all">
+                                <FaInstagram className="text-sm" />
+                            </a>
+                            <a href="#linkedin" className="w-9 h-9 rounded-full bg-base-100 flex items-center justify-center text-base-content/70 hover:text-primary hover:shadow-md transition-all">
+                                <FaLinkedinIn className="text-sm" />
+                            </a>
+                        </div>
                     </div>
-                </nav>
-                <aside>
-                    <p>Copyright © {new Date().getFullYear()} - All right reserved by ACME Industries Ltd</p>
-                </aside>
-            </footer>
-        </div>
+
+                    {/* Explore */}
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-sm uppercase tracking-wider text-base-content/90">
+                            Explore
+                        </h4>
+                        <ul className="space-y-2 text-sm text-base-content/70">
+                            <li><Link to="/property" className="hover:text-primary transition-colors">Browse Properties</Link></li>
+                            <li><Link to="/roommate" className="hover:text-primary transition-colors">Find Roommates</Link></li>
+                            <li><Link to="/property" className="hover:text-primary transition-colors">Single & Shared Rooms</Link></li>
+                            <li><Link to="/property" className="hover:text-primary transition-colors">Executive Studios</Link></li>
+                            <li><Link to="/property" className="hover:text-primary transition-colors">Top Locations</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* For Landlords & Tenants */}
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-sm uppercase tracking-wider text-base-content/90">
+                            Portals
+                        </h4>
+                        <ul className="space-y-2 text-sm text-base-content/70">
+                            <li><Link to="/owner" className="hover:text-primary transition-colors">Landlord Dashboard</Link></li>
+                            <li><Link to="/owner/manage-property" className="hover:text-primary transition-colors">List New Property</Link></li>
+                            <li><Link to="/my-booking" className="hover:text-primary transition-colors">Tenant Bookings</Link></li>
+                            <li><Link to="/roommate/profile" className="hover:text-primary transition-colors">Roommate Profile</Link></li>
+                            <li><Link to="/signup" className="hover:text-primary transition-colors">Create Account</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-sm uppercase tracking-wider text-base-content/90">
+                            Contact Us
+                        </h4>
+                        <ul className="space-y-2.5 text-sm text-base-content/70">
+                            <li className="flex items-start gap-2">
+                                <HiOutlineMapPin className="text-base text-primary shrink-0 mt-0.5" />
+                                <span>Sirajganj Sadar, Bangladesh</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <HiOutlineEnvelope className="text-base text-primary shrink-0" />
+                                <span>toufiq822553@gmail.com</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <HiOutlinePhone className="text-base text-primary shrink-0" />
+                                <span>+880 1320798059</span>
+                            </li>
+                            <li className="pt-2">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success/15 text-success">
+                                    <span className="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                                    Support Available 24/7
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-base-300 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-base-content/60">
+                    <p>© {new Date().getFullYear()} Nestora Housing Platform. All rights reserved.</p>
+                    <div className="flex gap-6">
+                        <a href="#privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
+                        <a href="#terms" className="hover:text-primary transition-colors">Terms of Service</a>
+                        <a href="#security" className="hover:text-primary transition-colors">Trust & Security</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     );
 };
 

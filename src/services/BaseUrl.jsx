@@ -1,1 +1,3 @@
-export const baseurl='https://housingandroommatemanagementplatform.onrender.com'
+  const baseurl='https://housingandroommatemanagementplatform.onrender.com'
+
+export { baseurl };

@@ -1,50 +1,86 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useCallback } from 'react';
 import { baseurl } from '../services/BaseUrl';
-import { Navigate } from 'react-router';
-
 
 export const AuthContext = createContext();
+
 const AuthProvider = ({ children }) => {
-    const [authUser, setAuthUser]= useState(null)
-    const accessToken = localStorage.getItem('hrp_token')
-    const [loading,setLoading]=useState(true)
-    console.log(accessToken);
+    const [accessToken, setAccessToken] = useState(() => localStorage.getItem('hrp_token') || null);
+    const [authUser, setAuthUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const fetchUser = async () => {
-        const userRes = await fetch(`${baseurl}/user`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-        const userData = await userRes.json()
-        //    console.log(userData);
-        setAuthUser(userData)
-        setLoading(false)
-    }
-
-    useEffect( () => {
-        if (!accessToken) {
-            setAuthUser(null)
-            setLoading(false)
-            return
+    const fetchUser = useCallback(async (token) => {
+        const tokenToUse = token || accessToken;
+        if (!tokenToUse || tokenToUse === 'undefined' || tokenToUse === 'null') {
+            setAuthUser(null);
+            setLoading(false);
+            return;
         }
 
-        fetchUser()
-    }, [accessToken])
+        try {
+            const userRes = await fetch(`${baseurl}/user`, {
+                headers: {
+                    Authorization: `Bearer ${tokenToUse}`
+                }
+            });
 
-    const logout=()=>{
-        localStorage.removeItem('hrp_token')
-        setAuthUser(null)
-        
-    }
+            if (!userRes.ok) {
+                localStorage.removeItem('hrp_token');
+                setAccessToken(null);
+                setAuthUser(null);
+                setLoading(false);
+                return;
+            }
 
-    console.log(authUser);
-  
+            const userData = await userRes.json();
+            if (userData && userData.id) {
+                setAuthUser(userData);
+            } else {
+                setAuthUser(null);
+            }
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+            setAuthUser(null);
+        } finally {
+            setLoading(false);
+        }
+    }, [accessToken]);
+
+    useEffect(() => {
+        if (!accessToken) {
+            setAuthUser(null);
+            setLoading(false);
+            return;
+        }
+        fetchUser(accessToken);
+    }, [accessToken, fetchUser]);
+
+    const login = (token, user) => {
+        localStorage.setItem('hrp_token', token);
+        setAccessToken(token);
+        if (user && user.id) {
+            setAuthUser(user);
+            setLoading(false);
+        } else {
+            fetchUser(token);
+        }
+    };
+
+    const logout = () => {
+        localStorage.removeItem('hrp_token');
+        setAccessToken(null);
+        setAuthUser(null);
+    };
+
+    const refreshUser = async () => {
+        if (accessToken) {
+            await fetchUser(accessToken);
+        }
+    };
 
     return (
-        <div>
-            <AuthContext.Provider value={{ authUser,setAuthUser,logout,accessToken,loading}}>{children}</AuthContext.Provider>
-        </div>
+        <AuthContext.Provider value={{ authUser, setAuthUser, login, logout, accessToken, loading, refreshUser }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 

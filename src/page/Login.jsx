@@ -3,91 +3,147 @@ import { Link, useNavigate } from 'react-router';
 import { baseurl } from '../services/BaseUrl';
 import { AuthContext } from '../context/AuthProvider';
 import toast from 'react-hot-toast';
+import { HiHomeModern, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi2";
 
 const Login = () => {
-
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const { authUser, setAuthUser } = useContext(AuthContext)
-    const navigate = useNavigate()
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        if (e) e.preventDefault();
+        if (!username.trim() || !password) {
+            toast.error("Please enter both username and password");
+            return;
+        }
+
         setLoading(true);
         try {
-            const formData = new URLSearchParams()
-            formData.append('username', username)
-            formData.append('password', password)
+            const formData = new URLSearchParams();
+            formData.append('username', username.trim());
+            formData.append('password', password);
+
             const res = await fetch(`${baseurl}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: formData
+            });
 
-            })
-            const data = await res.json()
-            console.log(data);
+            const data = await res.json();
 
-            const accessToken = data?.access_token
-            localStorage.setItem('hrp_token', accessToken)
-
-            const userRes = await fetch(`${baseurl}/user`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-            const userData = await userRes.json()
-            //    console.log(userData);
-
-            if (userData.id) {
-                setAuthUser(userData)
-                setLoading(false)
-
-                if (userData.role == 'owner') {
-                    navigate('/owner')
-                }
-                else {
-                    navigate('/')
-                }
-            }
-            else {
-                toast.error('username or password is incorrect')
-                setLoading(false)
-                return
+            if (!res.ok || !data.access_token) {
+                toast.error(data.detail || "Invalid username or password");
+                setLoading(false);
+                return;
             }
 
+            const accessToken = data.access_token;
+            const userData = data.user;
+
+            login(accessToken, userData);
+            toast.success(`Welcome back, ${userData?.firstname || username}!`);
+            setLoading(false);
+
+            if (userData?.role === 'owner') {
+                navigate('/owner');
+            } else {
+                navigate('/');
+            }
         } catch (error) {
-            console.log(error);
+            console.error("Login error:", error);
+            toast.error("Network error. Please try again.");
+            setLoading(false);
         }
-    }
-    console.log(authUser);
-
+    };
     return (
-        <div className="hero bg-base-200 min-h-screen">
-            <div className="hero-content flex-col ">
-                <div className="text-center">
-                    <h1 className="text-5xl font-bold">Login now!</h1>
-                    <p className='py-6 w-96'>
-                        Please Enter Your Credential
+        <div className="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-200 flex items-center justify-center p-4 py-12">
+            <div className="max-w-md w-full">
+                {/* Brand Header */}
+                <div className="text-center mb-8">
+                    <Link to="/" className="inline-flex items-center gap-2 mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-primary-content shadow-lg shadow-primary/25">
+                            <HiHomeModern className="text-2xl" />
+                        </div>
+                        <span className="font-black text-3xl tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                            Nestora
+                        </span>
+                    </Link>
+                    <h1 className="text-3xl font-black text-base-content tracking-tight">
+                        Welcome Back
+                    </h1>
+                    <p className="text-sm text-base-content/65 mt-1">
+                        Sign in to manage your bookings, properties, or roommate connections.
                     </p>
                 </div>
-                <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <div className="card-body">
-                        <fieldset className="fieldset">
-                            <label className="label">Username</label>
-                            <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" className="input" placeholder="username" />
-                            <label className="label">Password</label>
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="input" placeholder="Password" />
-                            <div><a className="link link-hover">Forgot password?</a></div>
 
+                {/* Login Card */}
+                <div className="card bg-base-100 shadow-2xl rounded-3xl border border-base-200 p-6 sm:p-8 space-y-6">
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        {/* Username */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                                Username
+                            </label>
+                            <div className="relative">
+                                <HiOutlineUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/40 text-lg" />
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="Enter your username"
+                                    className="input input-bordered w-full rounded-2xl pl-11 text-sm bg-base-200/40 focus:bg-base-100"
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                            <button onClick={handleLogin} className="btn btn-neutral mt-4"
-                                disabled={loading}>
-                                {loading ? 'Logging in...' : 'Login'}
-                            </button>
-                            <div><Link to={'/signup'} className="link link-hover font-semibold ">Don't have an account?</Link></div>
-                        </fieldset>
+                        {/* Password */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="block text-xs font-bold uppercase tracking-wider text-base-content/70">
+                                    Password
+                                </label>
+                                <span className="text-xs text-primary font-semibold cursor-pointer hover:underline">
+                                    Forgot?
+                                </span>
+                            </div>
+                            <div className="relative">
+                                <HiOutlineLockClosed className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/40 text-lg" />
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="input input-bordered w-full rounded-2xl pl-11 text-sm bg-base-200/40 focus:bg-base-100"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Login Button */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="btn btn-primary w-full rounded-2xl font-black text-sm h-12 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all mt-2"
+                        >
+                            {loading ? (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            ) : (
+                                "Sign In"
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Sign Up Redirect */}
+                    <div className="text-center pt-2 border-t border-base-200 text-xs text-base-content/70">
+                        Don't have an account yet?{' '}
+                        <Link to="/signup" className="text-primary font-bold hover:underline">
+                            Create Account
+                        </Link>
                     </div>
                 </div>
             </div>
