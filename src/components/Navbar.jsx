@@ -65,6 +65,13 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                             )}
+                            {authUser?.role === 'admin' && (
+                                <li>
+                                    <Link to="/admin" className="text-accent font-black">
+                                        🛡️ Admin Portal
+                                    </Link>
+                                </li>
+                            )}
                         </ul>
                     </div>
 
@@ -147,6 +154,19 @@ const Navbar = () => {
                                 </Link>
                             </li>
                         )}
+                        {authUser?.role === 'admin' && (
+                            <li>
+                                <Link
+                                    to="/admin"
+                                    className="rounded-xl px-4 py-2 bg-gradient-to-r from-accent/20 to-primary/20 text-accent font-black border border-accent/30 hover:shadow-sm"
+                                >
+                                    <span className="flex items-center gap-1.5">
+                                        <FaShieldAlt className="text-accent text-xs" />
+                                        Admin Portal
+                                    </span>
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                 </div>
 
@@ -169,12 +189,26 @@ const Navbar = () => {
                                             @{authUser.username} • {authUser.email}
                                         </span>
                                         <div className="mt-1">
-                                            <span className={`badge badge-sm font-semibold capitalize ${authUser.role === 'owner' ? 'badge-primary' : 'badge-neutral'}`}>
+                                            <span className={`badge badge-sm font-semibold capitalize ${
+                                                authUser.role === 'admin'
+                                                    ? 'badge-accent'
+                                                    : authUser.role === 'owner'
+                                                        ? 'badge-primary'
+                                                        : 'badge-neutral'
+                                            }`}>
                                                 {authUser.role}
                                             </span>
                                         </div>
                                     </div>
                                 </li>
+                                {authUser.role === 'admin' && (
+                                    <li>
+                                        <Link to="/admin" className="flex items-center gap-2 py-2 text-accent font-black bg-accent/10 rounded-xl mb-1">
+                                            <FaShieldAlt className="text-base" />
+                                            Admin Control Center
+                                        </Link>
+                                    </li>
+                                )}
                                 <li>
                                     <Link to="/user/profile" className="flex items-center gap-2 py-2">
                                         <HiUserCircle className="text-lg text-primary" />

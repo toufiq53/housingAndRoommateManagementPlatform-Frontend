@@ -3,6 +3,7 @@ import { baseurl } from '../../services/BaseUrl';
 import { AuthContext } from '../../context/AuthProvider';
 import { VerifiedBadge } from '../../utils/verification';
 import toast from 'react-hot-toast';
+import { IoMdCreate } from "react-icons/io";
 import {
     HiOutlineBriefcase,
     HiOutlineMapPin,
@@ -10,6 +11,7 @@ import {
     HiOutlineSparkles,
     HiOutlinePhoto,
     HiOutlineCheckCircle
+    
 } from "react-icons/hi2";
 
 const MyProfile = () => {
@@ -184,7 +186,8 @@ const MyProfile = () => {
             {!profile && !isEditing ? (
                 <div className="text-center py-16 bg-base-100 rounded-3xl border border-dashed border-base-200 p-8 space-y-4 shadow-sm">
                     <div className="w-16 h-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center text-3xl mx-auto">
-                        <HiOutlineSparkles />
+                        {/* <HiOutlineSparkles /> */}
+                        <IoMdCreate />
                     </div>
                     <h2 className="text-2xl font-black text-base-content">Create Your Roommate Profile</h2>
                     <p className="text-xs sm:text-sm text-base-content/65 max-w-md mx-auto">

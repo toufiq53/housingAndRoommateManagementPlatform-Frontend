@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { HiMagnifyingGlass, HiOutlineBuildingOffice, HiOutlineShieldCheck, HiOutlineSparkles } from "react-icons/hi2";
+import { PiHandCoinsLight } from "react-icons/pi";
 import { FaUserCheck, FaStar } from "react-icons/fa";
 
 const HeroBanner = () => {
@@ -156,7 +157,8 @@ const HeroBanner = () => {
 
                         <div className="flex items-center gap-3 p-3 bg-base-100/60 backdrop-blur-sm rounded-2xl border border-base-200">
                             <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center text-lg shrink-0">
-                                <HiOutlineSparkles />
+                                <PiHandCoinsLight />
+
                             </div>
                             <div>
                                 <h4 className="text-xs font-bold text-base-content">Zero Brokerage</h4>

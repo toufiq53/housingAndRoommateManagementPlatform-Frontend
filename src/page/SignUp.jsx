@@ -50,8 +50,18 @@ const SignUp = () => {
             const data = await res.json();
 
             if (res.ok) {
-                toast.success(data.message || "Account created successfully! Please sign in.");
-                navigate('/login');
+                if (role === 'owner' || data.status === 'pending') {
+                    toast.success("Owner registration submitted! Pending administrator approval.", { duration: 6000 });
+                    navigate('/login', {
+                        state: {
+                            pendingApproval: true,
+                            message: "Your landlord account has been registered and is pending administrator review. You will be able to log in once an admin approves your account."
+                        }
+                    });
+                } else {
+                    toast.success(data.message || "Account created successfully! Please sign in.");
+                    navigate('/login');
+                }
             } else {
                 toast.error(data.detail || "Signup failed. Please check inputs.");
             }
@@ -122,6 +132,15 @@ const SignUp = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {role === 'owner' && (
+                            <div className="mt-3 p-3 rounded-2xl bg-warning/10 border border-warning/30 flex items-start gap-2.5 text-xs text-base-content/80">
+                                <span className="text-warning text-base font-bold shrink-0">⏳</span>
+                                <p className="leading-relaxed">
+                                    <strong className="text-base-content font-bold">Landlord Verification Required:</strong> Newly registered owner accounts undergo administrative review. An administrator will review and accept or reject your application before portal access is granted.
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     <form onSubmit={handleSignup} className="space-y-4">

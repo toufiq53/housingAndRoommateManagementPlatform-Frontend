@@ -84,7 +84,7 @@ const Home = () => {
                         Effortless Process
                     </span>
                     <h2 className="text-3xl sm:text-4xl font-black text-base-content mt-3 tracking-tight">
-                        How Habita Works
+                        How Nestora Works
                     </h2>
                     <p className="text-sm sm:text-base text-base-content/70 mt-2">
                         Three simple steps to settle into your dream room or find your compatible flatmate.

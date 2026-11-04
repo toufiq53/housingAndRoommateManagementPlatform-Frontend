@@ -21,6 +21,16 @@ import RoommateLayout from "../layout/RoommateLayout";
 import MyProfile from "../page/roommate/MyProfile";
 import BrowseProfile from "../page/roommate/BrowseProfile";
 import OwnerDashBoard from "../page/owner/OwnerDashBoard";
+import AdminProtected from "./AdminProtected";
+import AdminLayout from "../layout/AdminLayout";
+import AdminDashboard from "../page/admin/AdminDashboard";
+import AdminOwnerRequests from "../page/admin/AdminOwnerRequests";
+import AdminUsers from "../page/admin/AdminUsers";
+import AdminProperties from "../page/admin/AdminProperties";
+import AdminRooms from "../page/admin/AdminRooms";
+import AdminBookings from "../page/admin/AdminBookings";
+import AdminRoommates from "../page/admin/AdminRoommates";
+import AdminNotifications from "../page/admin/AdminNotifications";
 
 const router = createBrowserRouter([
     {
@@ -110,6 +120,44 @@ const router = createBrowserRouter([
             {
                 path: 'profile',
                 element: <MyProfile />
+            }
+        ]
+    },
+    {
+        path: "/admin",
+        element: <AdminProtected><AdminLayout /></AdminProtected>,
+        children: [
+            {
+                index: true,
+                element: <AdminDashboard />
+            },
+            {
+                path: 'owner-requests',
+                element: <AdminOwnerRequests />
+            },
+            {
+                path: 'users',
+                element: <AdminUsers />
+            },
+            {
+                path: 'properties',
+                element: <AdminProperties />
+            },
+            {
+                path: 'rooms',
+                element: <AdminRooms />
+            },
+            {
+                path: 'bookings',
+                element: <AdminBookings />
+            },
+            {
+                path: 'roommates',
+                element: <AdminRoommates />
+            },
+            {
+                path: 'notifications',
+                element: <AdminNotifications />
             }
         ]
     },

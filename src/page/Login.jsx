@@ -1,16 +1,18 @@
 import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { baseurl } from '../services/BaseUrl';
 import { AuthContext } from '../context/AuthProvider';
 import toast from 'react-hot-toast';
-import { HiHomeModern, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi2";
+import { HiHomeModern, HiOutlineLockClosed, HiOutlineUser, HiOutlineExclamationTriangle } from "react-icons/hi2";
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(false);
+    const [loginNotice, setLoginNotice] = useState(location.state?.message || null);
 
     const handleLogin = async (e) => {
         if (e) e.preventDefault();
@@ -20,6 +22,7 @@ const Login = () => {
         }
 
         setLoading(true);
+        setLoginNotice(null);
         try {
             const formData = new URLSearchParams();
             formData.append('username', username.trim());
@@ -36,7 +39,9 @@ const Login = () => {
             const data = await res.json();
 
             if (!res.ok || !data.access_token) {
-                toast.error(data.detail || "Invalid username or password");
+                const detailMsg = data.detail || "Invalid username or password";
+                setLoginNotice(detailMsg);
+                toast.error(detailMsg, { duration: 5000 });
                 setLoading(false);
                 return;
             }
@@ -48,7 +53,9 @@ const Login = () => {
             toast.success(`Welcome back, ${userData?.firstname || username}!`);
             setLoading(false);
 
-            if (userData?.role === 'owner') {
+            if (userData?.role === 'admin') {
+                navigate('/admin');
+            } else if (userData?.role === 'owner') {
                 navigate('/owner');
             } else {
                 navigate('/');
@@ -82,6 +89,17 @@ const Login = () => {
 
                 {/* Login Card */}
                 <div className="card bg-base-100 shadow-2xl rounded-3xl border border-base-200 p-6 sm:p-8 space-y-6">
+                    {loginNotice && (
+                        <div className={`p-4 rounded-2xl border text-xs leading-relaxed flex items-start gap-2.5 ${
+                            loginNotice.toLowerCase().includes('pending')
+                                ? 'bg-warning/10 border-warning/30 text-base-content'
+                                : 'bg-error/10 border-error/30 text-error'
+                        }`}>
+                            <HiOutlineExclamationTriangle className="text-lg shrink-0 mt-0.5" />
+                            <div>{loginNotice}</div>
+                        </div>
+                    )}
+
                     <form onSubmit={handleLogin} className="space-y-4">
                         {/* Username */}
                         <div>
